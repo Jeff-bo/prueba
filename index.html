@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carga de archivo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f2f2f2;
+        }
+        #progreso {
+            width: 50%;
+            height: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            padding: 5px;
+            text-align: center;
+        }
+        #barra-progreso {
+            width: 0%;
+            height: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #337ab7;
+            color: #fff;
+            padding: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center">Carga de archivo</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <input type="file" id="archivo" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="progreso">
+                    <div id="barra-progreso">0%</div>
+                </div>
+                <p id="porcentaje">0%</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const archivoInput = document.getElementById('archivo');
+        const progresoDiv = document.getElementById('progreso');
+        const barraProgresoDiv = document.getElementById('barra-progreso');
+        const porcentajeP = document.getElementById('porcentaje');
+
+        archivoInput.addEventListener('change', () => {
+            const archivo = archivoInput.files[0];
+            const tamañoArchivo = archivo.size;
+            const fragmentos = Math.ceil(tamañoArchivo / 1024);
+            let progreso = 0;
+
+            for (let i = 0; i < fragmentos; i++) {
+                const leerArchivo = new Promise((resolve, reject) => {
+                    const archivoFragmento = archivo.slice(i * 1024, (i + 1) * 1024);
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        resolve();
+                    };
+                    reader.readAsArrayBuffer(archivoFragmento);
+                });
+
+                leerArchivo.then(() => {
+                    progreso++;
+                    const porcentajeProgreso = (progreso / fragmentos) * 100;
+                    barraProgresoDiv.style.width = `${porcentajeProgreso}%`;
+                    barraProgresoDiv.textContent = `${porcentajeProgreso.toFixed(2)}%`;
+                    porcentajeP.textContent = `${porcentajeProgreso.toFixed(2)}%`;
+                });
+            }
+        });
+		console.log("Esta es una prueba");
+    </script>
+</body>
+</html>
